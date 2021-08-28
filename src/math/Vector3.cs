@@ -59,7 +59,7 @@ namespace RayTracer
         public Vector3 Normalized()
         {
             // Write your code here...
-            magnitude = this.Length()
+            double magnitude = this.Length();
             return new Vector3(this.x / magnitude, this.y / magnitude, this.z / magnitude);
         }
 
@@ -105,7 +105,7 @@ namespace RayTracer
         public static Vector3 operator -(Vector3 a)
         {
             // Write your code here...
-            return new Vector3(-1 * this.x, -1 * this.y, -1 * this.z);
+            return new Vector3(-1 * a.x, -1 * a.y, -1 * a.z);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace RayTracer
         public static Vector3 operator *(Vector3 a, double b)
         {
             // Write your code here...
-            return new Vector3(-b * this.x, -b * this.y, -b * this.z);
+            return new Vector3(b * a.x, b * a.y, b * a.z);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace RayTracer
         public static Vector3 operator *(double b, Vector3 a)
         {
             // Write your code here...
-            return new Vector3(-b * this.x, -b * this.y, -b * this.z);
+            return new Vector3(b * a.x, b * a.y, b * a.z);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace RayTracer
         public static Vector3 operator /(Vector3 a, double b)
         {
             // Write your code here...
-            return new Vector3(this.x / -b, this.y / -b, this.z / -b);
+            return new Vector3(a.x / b, a.y / b, a.z / b);
         }
 
         /// <summary>

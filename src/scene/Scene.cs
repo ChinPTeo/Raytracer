@@ -50,7 +50,41 @@ namespace RayTracer
         /// <param name="outputImage">Image to store render output</param>
         public void Render(Image outputImage)
         {
-            // Begin writing your code here...
+                    /*Console.WriteLine(outputImage.Height);*/
+
+
+            // Initializing variables
+            double fov = 60;
+            Vector3 origin = new Vector3(0, 0, 0);
+            double imageAspectRatio = outputImage.Width / outputImage.Height; // assuming width > height 
+            double scale = Math.Tan(fov / 2 * Math.PI / 180);
+
+            // Initializing a 2D array of rays, origin at 0,0,0 and direction of pixel
+            List<List<Ray>> rays = new List<List<Ray>>();
+            for (int j = 0; j < outputImage.Height; j++)
+            {
+                for (int i = 0; i < outputImage.Width; i++)
+                {
+                    double x = (2 * ((i + 0.5) / outputImage.Width) - 1) * scale * imageAspectRatio;
+                    double y = (1 - 2 * ((j + 0.5) / outputImage.Height)) * scale;
+                    Vector3 rayDirection = new Vector3(x, y, 1);
+                    rayDirection = rayDirection - origin;
+                    rayDirection = rayDirection.Normalized();
+                    Ray ray = new Ray(origin, rayDirection);
+                    if ((x == 0 ) )
+                    {
+                    }
+                        Console.WriteLine(ray.Direction);
+                }
+            }
+
+            /*            double imageAspectRatio = options.width / (double)options.height;*/
+
+            /*OutputImageWidth;
+                OutputImageHeight;*/
+            // CHeck Hit?
+            // Profit
+
         }
 
     }
