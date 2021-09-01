@@ -31,8 +31,16 @@ namespace RayTracer
         /// <returns>Hit data (or null if no intersection)</returns>
         public RayHit Intersect(Ray ray)
         {
-            // Write your code here...
-            return null;
+            // there is intersection when dot product is not = 0
+            if ((ray.Direction).Dot(this.normal) != 0)
+            {
+                Vector3 position = ((this.center - ray.Origin).Dot(this.normal) / (ray.Direction).Dot(this.normal)) * ray.Direction;
+                return new RayHit(position, this.normal, ray.Direction, this.material);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>

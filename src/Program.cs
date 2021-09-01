@@ -24,10 +24,10 @@ namespace RayTracer
             [Option('o', "output", Required = true, HelpText = "Output file path (PNG).")]
             public string OutputFilePath { get; set; }
 
-            [Option('w', "width", Default = (int)400, HelpText = "Output image width in pixels.")]
+            [Option('w', "width", Default = (int)5, HelpText = "Output image width in pixels.")]
             public int OutputImageWidth { get; set; }
 
-            [Option('h', "height", Default = (int)400, HelpText = "Output image height in pixels.")]
+            [Option('h', "height", Default = (int)5, HelpText = "Output image height in pixels.")]
             public int OutputImageHeight { get; set; }
 
             [Option('x', "aa-mult", Default = (int)1, HelpText = "Anti-aliasing sampling multiplier.")]

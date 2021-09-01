@@ -71,10 +71,10 @@ namespace RayTracer
                     rayDirection = rayDirection - origin;
                     rayDirection = rayDirection.Normalized();
                     Ray ray = new Ray(origin, rayDirection);
-                    if ((x == 0 ) )
+                    if ((x == 0) && (y==0) )
                     {
                     }
-                        Console.WriteLine(ray.Direction);
+                        /*Console.WriteLine(ray.Direction);*/
                 }
             }
 
