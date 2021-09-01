@@ -31,8 +31,24 @@ namespace RayTracer
         /// <returns>Hit data (or null if no intersection)</returns>
         public RayHit Intersect(Ray ray)
         {
-            // Write your code here...
-            return null;
+            //solve for tc
+            double L = this.center - ray.Origin;
+            double tc = dot(L, ray.Direction);
+            
+            if ( tc < 0.0 ) {return null};
+            double d2 = (tc*tc) - (L*L);
+            
+            double radius2 = this.radius * this.radius;
+            if ( d2 > radius2){ return null};
+
+            //solve for t1c
+            double t1c = sqrt( radius2 - d2 );
+
+            //solve for intersection points
+            *t1 = tc - t1c;
+            *t2 = tc + t1c;
+            
+            return new RayHit();
         }
 
         /// <summary>
