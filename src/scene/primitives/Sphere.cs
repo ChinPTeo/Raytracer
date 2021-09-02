@@ -32,22 +32,22 @@ namespace RayTracer
         public RayHit Intersect(Ray ray)
         {
             //solve for tc
-            double L = this.center - ray.Origin;
-            double tc = dot(L, ray.Direction);
-            
-            if ( tc < 0.0 ) {return null};
-            double d2 = (tc*tc) - (L*L);
-            
+            Vector3 L = this.center - ray.Origin;
+            double tc = L.Dot(ray.Direction);
+
+            if (tc < 0.0) { return null; }
+            double d2 = (tc * tc) - (L.LengthSq());
+
             double radius2 = this.radius * this.radius;
-            if ( d2 > radius2){ return null};
+            if (d2 > radius2) { return null; }
 
             //solve for t1c
-            double t1c = sqrt( radius2 - d2 );
+            double t1c = Math.Sqrt(radius2 - d2);
 
             //solve for intersection points
-            *t1 = tc - t1c;
-            *t2 = tc + t1c;
-            
+            double t1 = tc - t1c;
+            double t2 = tc + t1c;
+
             return new RayHit();
         }
 
