@@ -50,7 +50,7 @@ namespace RayTracer
         /// <param name="outputImage">Image to store render output</param>
         public void Render(Image outputImage)
         {
-                    /*Console.WriteLine(outputImage.Height);*/
+            /*Console.WriteLine(outputImage.Height);*/
 
 
             // Initializing variables
@@ -65,27 +65,47 @@ namespace RayTracer
             {
                 for (int i = 0; i < outputImage.Width; i++)
                 {
+
                     double x = (2 * ((i + 0.5) / outputImage.Width) - 1) * scale * imageAspectRatio;
                     double y = (1 - 2 * ((j + 0.5) / outputImage.Height)) * scale;
                     Vector3 rayDirection = new Vector3(x, y, 1);
                     rayDirection = rayDirection - origin;
                     rayDirection = rayDirection.Normalized();
                     Ray ray = new Ray(origin, rayDirection);
-                    if ((x == 0) && (y==0) )
+
+
+                    //     Console.WriteLine(ray.Direction);
+                    // if ((x == 0) && (y == 0))
+                    // {
+                    // }
+
+
+                    outputImage.SetPixel(i, j, new Color(0.0, 0.0, 0.0));
+                    foreach (SceneEntity entity in this.entities)
                     {
+                        RayHit hit = entity.Intersect(ray);
+                        if (hit != null)
+                        {
+                            // We got a hit with this entity!
+                            // The colour of the entity is entity.Material.Color
+                            outputImage.SetPixel(i, j, entity.Material.Color);
+                            // continue;
+                        }
+
                     }
-                        /*Console.WriteLine(ray.Direction);*/
+
+
                 }
+
+                /*            double imageAspectRatio = options.width / (double)options.height;*/
+
+                /*OutputImageWidth;
+                    OutputImageHeight;*/
+                // CHeck Hit?
+                // Profit
+
             }
 
-            /*            double imageAspectRatio = options.width / (double)options.height;*/
-
-            /*OutputImageWidth;
-                OutputImageHeight;*/
-            // CHeck Hit?
-            // Profit
-
         }
-
     }
 }
