@@ -81,14 +81,17 @@ namespace RayTracer
 
 
                     outputImage.SetPixel(i, j, new Color(0.0, 0.0, 0.0));
+                    double zdepth = -1;
                     foreach (SceneEntity entity in this.entities)
                     {
                         RayHit hit = entity.Intersect(ray);
                         if (hit != null)
                         {
                             // We got a hit with this entity!
+                            double new_zdepth = hit.Position.LengthSq();
                             // The colour of the entity is entity.Material.Color
-                            outputImage.SetPixel(i, j, entity.Material.Color);
+                            if ((zdepth == -1) || (zdepth > new_zdepth))
+                            { outputImage.SetPixel(i, j, entity.Material.Color); }
                             // continue;
                         }
 

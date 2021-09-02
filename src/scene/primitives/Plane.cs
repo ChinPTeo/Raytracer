@@ -31,12 +31,11 @@ namespace RayTracer
         /// <returns>Hit data (or null if no intersection)</returns>
         public RayHit Intersect(Ray ray)
         {
+            double eps = 0.001;
             // there is intersection when dot product  is 0 it is parallel
-            if ((ray.Direction).Dot(this.normal) >= 0.001)
+            if ((ray.Direction).Dot(this.normal) >= eps)
             {
                 return null;
-
-
             }
             else
             {
