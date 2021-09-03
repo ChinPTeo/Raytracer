@@ -120,11 +120,12 @@ namespace RayTracer
                         Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
                         Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
 
-                        pixelColor = (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
+                        pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
 
                     }
                 }
             }
+
             return pixelColor;
         }
         // F
