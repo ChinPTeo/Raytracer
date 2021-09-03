@@ -58,7 +58,7 @@ namespace RayTracer
             Vector3 origin = new Vector3(0, 0, 0);
             double imageAspectRatio = outputImage.Width / outputImage.Height; // assuming width > height 
             double scale = Math.Tan(fov / 2 * Math.PI / 180);
-
+            const int max_depth = 50;
             // Initializing a 2D array of rays, origin at 0,0,0 and direction of pixel
             List<List<Ray>> rays = new List<List<Ray>>();
             for (int j = 0; j < outputImage.Height; j++)
@@ -73,29 +73,15 @@ namespace RayTracer
                     rayDirection = rayDirection.Normalized();
                     Ray ray = new Ray(origin, rayDirection);
 
-
+                    Color pixel_color = new Color(0.0, 0.0, 0.0);
                     //     Console.WriteLine(ray.Direction);
                     // if ((x == 0) && (y == 0))
                     // {
                     // }
 
 
-                    outputImage.SetPixel(i, j, new Color(0.0, 0.0, 0.0));
-                    double zdepth = -1;
-                    foreach (SceneEntity entity in this.entities)
-                    {
-                        RayHit hit = entity.Intersect(ray);
-                        if (hit != null)
-                        {
-                            // We got a hit with this entity!
-                            double new_zdepth = hit.Position.LengthSq();
-                            // The colour of the entity is entity.Material.Color
-                            if ((zdepth == -1) || (zdepth > new_zdepth))
-                            { outputImage.SetPixel(i, j, entity.Material.Color); }
-                            // continue;
-                        }
-
-                    }
+                    pixel_color = Colorizer(outputImage, i, j, ray);
+                    outputImage.SetPixel(i, j, pixel_color);
 
 
                 }
@@ -110,5 +96,39 @@ namespace RayTracer
             }
 
         }
+
+        public Color Colorizer(Ray ray){
+                    double zdepth = -1;
+                    foreach (SceneEntity entity in this.entities)
+                    {
+                        RayHit hit = entity.Intersect(ray);
+                        if (hit != null)
+                        {
+                            // We got a hit with this entity!
+                            double new_zdepth = hit.Position.LengthSq();
+
+                            // The colour of the entity is entity.Material.Color
+                            if ((zdepth == -1) || (zdepth > new_zdepth))
+                            { 
+                                //Make random ray
+                                Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
+                                Ray new_ray= Ray(hit.Position, (new_p - hit.Position).Normalized());
+
+                                return 0.5 * Colorizer(new_ray);
+
+                            }
+                        }
+
+                    }
+        }
+        // F
+        Vector3 random_in_unit_sphere() {
+            var rand = new Random();
+            while (true) {
+                p = new Vector3 (rand.NextDouble()*2-1,rand.NextDouble()*2-1,rand.NextDouble()*2-1)
+                if ( p.LengthSq()>= 1) {continue;}
+            return p;
+    }
+}
     }
 }
