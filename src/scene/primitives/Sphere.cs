@@ -47,7 +47,7 @@ namespace RayTracer
             Vector3 t2 = (tc + t1c) * ray.Direction;
 
 
-            return new RayHit(t1, t1 - this.center, ray.Direction, this.material);
+            return new RayHit(t1, (t1 - this.center).Normalized(), ray.Direction, this.material);
         }
 
         /// <summary>
