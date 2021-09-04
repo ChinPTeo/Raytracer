@@ -38,7 +38,7 @@ namespace RayTracer
             Vector3 vertice2 = v2 - v0;
             Vector3 normal = vertice1.Cross(vertice2);
             normal = normal.Normalized();
-            double kEpsilon = 0.1;
+            double kEpsilon = 0.09;
             // Step 1: finding P
 
             // check if ray and plane are parallel ?
@@ -48,11 +48,11 @@ namespace RayTracer
 
             // compute d parameter using equation 2
             double d = normal.Dot(v0);
-
+            // 
             // compute t (equation 3)
-            double t = (normal.Dot(ray.Origin) + d) / NdotRayDirection;
+            double t = (v0 - ray.Origin).Dot(normal) / ray.Direction.Dot(normal);
             // check if the triangle is in behind the ray
-            if (t < 0) return null; // the triangle is behind 
+            if (Math.Abs(t) < kEpsilon) return null; // the triangle is behind 
 
             // compute the intersection point using equation 1
             Vector3 P = ray.Origin + t * ray.Direction;
