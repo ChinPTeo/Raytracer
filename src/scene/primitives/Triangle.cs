@@ -38,7 +38,7 @@ namespace RayTracer
             Vector3 vertice2 = v2 - v0;
             Vector3 normal = vertice1.Cross(vertice2);
             normal = normal.Normalized();
-            double kEpsilon = 0;
+            double kEpsilon = 0.1;
             // Step 1: finding P
 
             // check if ray and plane are parallel ?
