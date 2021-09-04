@@ -128,6 +128,7 @@ namespace RayTracer
              // Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
              // Console.WriteLine(newEntity);
 
+
                 foreach (PointLight light in this.lights)
                 {
                     // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
@@ -139,9 +140,9 @@ namespace RayTracer
                     }
 
 
-                    Color a_color = light.Color * newEntity.Material.Color * lum;
+                    pixelColor += light.Color * newEntity.Material.Color * lum;
 
-                    return a_color;
+                    return pixelColor;
                 }
             }
             return pixelColor;
