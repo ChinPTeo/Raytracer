@@ -131,6 +131,17 @@ namespace RayTracer
 
                 foreach (PointLight light in this.lights)
                 {
+                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.01;
+                    Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
+                    foreach (SceneEntity entity in this.entities)
+                    {
+                        RayHit hit = entity.Intersect(shadowRay);
+                        if (hit != null)
+                        {
+                            return pixelColor;
+                        }
+                    }
+
                     // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
                     double lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized()));
                     // Console.WriteLine(a_color);
