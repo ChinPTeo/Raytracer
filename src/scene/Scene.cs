@@ -73,14 +73,13 @@ namespace RayTracer
                     rayDirection = rayDirection.Normalized();
                     Ray ray = new Ray(origin, rayDirection);
 
-                    Color pixel_color = new Color(0.0, 0.0, 0.0);
                     //     Console.WriteLine(ray.Direction);
                     // if ((x == 0) && (y == 0))
                     // {
                     // }
 
 
-                    pixel_color = Colorizer(ray, max_bounce);
+                    Color pixel_color = Colorizer(ray, max_bounce);
                     outputImage.SetPixel(i, j, pixel_color);
 
 
@@ -104,31 +103,47 @@ namespace RayTracer
                 return new Color(0, 0, 0);
             }
             Color pixelColor = new Color(0, 0, 0);
+            SceneEntity newEntity = null;
             double zdepth = -1;
+            RayHit storedHit = null;
+            // Looping through objects
             foreach (SceneEntity entity in this.entities)
             {
                 RayHit hit = entity.Intersect(ray);
                 if (hit != null)
                 {
-                    // We got a hit with this entity!
-                    double new_zdepth = hit.Position.LengthSq();
-
-                    // The colour of the entity is entity.Material.Color
-                    if ((zdepth == -1) || (zdepth > new_zdepth))
+                    // Selecting closest obj
+                    if ((zdepth == -1) || (zdepth > hit.Position.LengthSq()))
                     {
-                        //Make random ray
-                        Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
-                        Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
-
-                        PointLight alight = this.lights.First();
-                        Color a_color = alight.Color * entity.Material.Color * hit.Normal.Dot(alight.Position - hit.Position)   ;
-                        // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
-                        pixelColor = a_color;
-
+                        newEntity = entity;
+                        zdepth = hit.Position.LengthSq();
+                        storedHit = hit;
                     }
                 }
             }
+            // ONly null or triangles
+            if (storedHit != null)
+            {//Make random ray
+             // Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
+             // Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
+             // Console.WriteLine(newEntity);
 
+                foreach (PointLight light in this.lights)
+                {
+                    // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
+                    double lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized()));
+                    // Console.WriteLine(a_color);
+                    if (lum < 0)
+                    {
+                        lum = 0;
+                    }
+
+
+                    Color a_color = light.Color * newEntity.Material.Color * lum;
+
+                    return a_color;
+                }
+            }
             return pixelColor;
         }
         // F

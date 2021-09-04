@@ -101,5 +101,45 @@ namespace RayTracer
         {
             return new Color(a.r + b.r, a.g + b.g, a.b + b.b);
         }
+
+        public Color Clamp()
+        {
+            double returnR = 0;
+            double returnG = 0;
+            double returnB = 0;
+            // Write your code here...
+            if ((this.r < 0) && (this.g < 0) && (this.b < 0))
+            {
+                returnR = 0;
+                returnG = 0;
+                returnB = 0;
+
+
+            }
+            else if ((this.r > 1) && (this.g > 1) && (this.b > 1))
+            {
+                returnG = 1;
+                returnB = 1;
+                returnR = 1;
+            }
+
+            return new Color(returnR, returnG, returnB);
+
+
+        }
+
+        public Color Normalized()
+        {
+            // Write your code here...
+            double magR = Math.Sqrt(this.r * this.r);
+            double magG = Math.Sqrt(this.g * this.g);
+            double magB = Math.Sqrt(this.b * this.b);
+
+            return new Color(this.r / magR, this.g / magG, this.b / magB);
+        }
     }
+
+
+
+
 }
