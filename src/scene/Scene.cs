@@ -98,11 +98,11 @@ namespace RayTracer
 
         public Color Colorizer(Ray ray, int bounce)
         {
+            Color pixelColor = new Color(0, 0, 0);
             if (bounce == 0)
             {
-                return new Color(0, 0, 0);
+                return pixelColor;
             }
-            Color pixelColor = new Color(0, 0, 0);
             SceneEntity newEntity = null;
             double zdepth = -1;
             RayHit storedHit = null;
@@ -124,11 +124,13 @@ namespace RayTracer
             // ONly null or triangles
             if (storedHit != null)
             {//Make random ray
+            return newEntity.Material.Color;
              // Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
              // Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
              // Console.WriteLine(newEntity);
-
-
+                Material.MaterialType diffuse =  Material.MaterialType.Diffuse;
+                Material.MaterialType reflective =  Material.MaterialType.Reflective;
+                // if(newEntity.Material.Type == (Material.MaterialType.Diffuse)){
                 foreach (PointLight light in this.lights)
                 {
                     Vector3 origin = storedHit.Position + storedHit.Normal * 0.01;
@@ -155,6 +157,12 @@ namespace RayTracer
 
                     return pixelColor;
                 }
+                // } 
+                
+                // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){
+                //     Ray reflectRay = new Ray(storedHit.Position, storedHit.Incident - 2*storedHit.Incident.Dot(storedHit.Normal)*storedHit.Normal);
+                //     return Colorizer(reflectRay, bounce-1);
+                // }
             }
             return pixelColor;
         }
