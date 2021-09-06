@@ -138,7 +138,7 @@ namespace RayTracer
                     {
                         //
                         RayHit shwHit = entity.Intersect(shadowRay);
-                        if ((shwHit != null &&(zdepth > shwHit.Position.LengthSq())) && (shwHit.Position.Z >= -1))
+                        if ((shwHit != null &&((light.Position-origin).LengthSq() > (shwHit.Position-origin).LengthSq())) )
                         {
                             if ((i == 300) && (j == 300))
                     {
@@ -147,11 +147,11 @@ namespace RayTracer
                         Console.WriteLine(shwHit.Position);
 
                     }
-                            lum=0.5;
-                    Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
-pixelColor +=  fixing*.1;
+                            lum=0.3;
+//                     Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
+// pixelColor +=  fixing*.1;
 
-                    return pixelColor;
+//                     return pixelColor;
                         }
                     }
                 }
@@ -172,10 +172,10 @@ pixelColor +=  fixing*.1;
                     {
                         lum = 0;
                     }
-                    Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
+                    // Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
 
-                    // pixelColor += light.Color * newEntity.Material.Color;
-                    pixelColor +=  fixing*.5;
+                    pixelColor += light.Color * newEntity.Material.Color * lum;
+                    // pixelColor +=  fixing*.5;
 
                     return pixelColor;
                 }
