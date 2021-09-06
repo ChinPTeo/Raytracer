@@ -74,12 +74,9 @@ namespace RayTracer
                     Ray ray = new Ray(origin, rayDirection);
 
                     //     Console.WriteLine(ray.Direction);
-                    // if ((x == 0) && (y == 0))
-                    // {
-                    // }
+                    
 
-
-                    Color pixel_color = Colorizer(ray, max_bounce);
+                    Color pixel_color = Colorizer(ray, max_bounce, i, j);
                     outputImage.SetPixel(i, j, pixel_color);
 
 
@@ -96,7 +93,7 @@ namespace RayTracer
 
         }
 
-        public Color Colorizer(Ray ray, int bounce)
+        public Color Colorizer(Ray ray, int bounce, int i, int j)
         {
             Color pixelColor = new Color(0, 0, 0);
             if (bounce == 0)
@@ -119,12 +116,45 @@ namespace RayTracer
                         zdepth = hit.Position.LengthSq();
                         storedHit = hit;
                     }
+                    if ((i == 300) && (j == 300))
+                    {
+                        Console.WriteLine(entity);
+                    }
+                    
                 }
             }
             // ONly null or triangles
             if (storedHit != null)
             {//Make random ray
+            double lum=1;
             // return newEntity.Material.Color;
+            foreach (PointLight light in this.lights){
+
+                // Decide on what side the shadow ray should be spawned
+                // if (newEntity.)
+                    Vector3 origin = storedHit.Position + storedHit.Normal*storedHit.Normal.Dot(storedHit.Incident) * 0.005;
+                    Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
+                    foreach (SceneEntity entity in this.entities)
+                    {
+                        //
+                        RayHit shwHit = entity.Intersect(shadowRay);
+                        if ((shwHit != null &&(zdepth > shwHit.Position.LengthSq())) && (shwHit.Position.Z >= -1))
+                        {
+                            if ((i == 300) && (j == 300))
+                    {
+                        Console.Write("shadow: ");
+                        Console.WriteLine(entity.Material.Type);
+                        Console.WriteLine(shwHit.Position);
+
+                    }
+                            lum=0.5;
+                    Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
+pixelColor +=  fixing*.1;
+
+                    return pixelColor;
+                        }
+                    }
+                }
              // Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
              // Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
              // Console.WriteLine(newEntity);
@@ -136,30 +166,20 @@ namespace RayTracer
                     
 
                     // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
-                    double lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized()));
+                    lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized())) * lum;
                     // Console.WriteLine(a_color);
                     if (lum < 0)
                     {
                         lum = 0;
                     }
+                    Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
 
-
-                    pixelColor += light.Color * newEntity.Material.Color * lum;
+                    // pixelColor += light.Color * newEntity.Material.Color;
+                    pixelColor +=  fixing*.5;
 
                     return pixelColor;
                 }
-                foreach (PointLight light in this.lights){
-                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
-                    Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
-                    foreach (SceneEntity entity in this.entities)
-                    {
-                        RayHit hit = entity.Intersect(shadowRay);
-                        if (hit != null)
-                        {
-                            return pixelColor;
-                        }
-                    }
-                }
+                
                 // } 
                 
                 // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){

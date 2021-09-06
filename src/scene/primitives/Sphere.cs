@@ -31,6 +31,7 @@ namespace RayTracer
         /// <returns>Hit data (or null if no intersection)</returns>
         public RayHit Intersect(Ray ray)
         {
+            double eps = 0.001;
             //solve for tc
             Vector3 L = this.center - ray.Origin;
             double tc = L.Dot(ray.Direction);

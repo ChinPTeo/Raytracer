@@ -45,6 +45,22 @@ namespace RayTracer
             }
         }
 
+        public RayHit Shadow(Ray ray)
+        {
+            double eps = 0.01;
+            // there is intersection when dot product  is 0 it is parallel
+            if ((ray.Direction).Dot(this.normal) >= eps)
+            {
+                return null;
+            } 
+            else
+            {
+                Vector3 position = ((this.center - ray.Origin).Dot(this.normal) / (ray.Direction).Dot(this.normal)) * ray.Direction;
+                // Console.WriteLine(position);
+                return new RayHit(position, this.normal, ray.Direction, this.material);
+            }
+        }
+
         /// <summary>
         /// The material of the plane.
         /// </summary>
