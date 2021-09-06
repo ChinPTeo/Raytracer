@@ -124,7 +124,7 @@ namespace RayTracer
             // ONly null or triangles
             if (storedHit != null)
             {//Make random ray
-            return newEntity.Material.Color;
+            // return newEntity.Material.Color;
              // Vector3 new_p = hit.Normal + hit.Position + random_in_unit_sphere();
              // Ray new_ray = new Ray(hit.Position, (new_p - hit.Position).Normalized());
              // Console.WriteLine(newEntity);
@@ -133,16 +133,7 @@ namespace RayTracer
                 // if(newEntity.Material.Type == (Material.MaterialType.Diffuse)){
                 foreach (PointLight light in this.lights)
                 {
-                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.01;
-                    Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
-                    foreach (SceneEntity entity in this.entities)
-                    {
-                        RayHit hit = entity.Intersect(shadowRay);
-                        if (hit != null)
-                        {
-                            return pixelColor;
-                        }
-                    }
+                    
 
                     // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
                     double lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized()));
@@ -156,6 +147,18 @@ namespace RayTracer
                     pixelColor += light.Color * newEntity.Material.Color * lum;
 
                     return pixelColor;
+                }
+                foreach (PointLight light in this.lights){
+                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
+                    Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
+                    foreach (SceneEntity entity in this.entities)
+                    {
+                        RayHit hit = entity.Intersect(shadowRay);
+                        if (hit != null)
+                        {
+                            return pixelColor;
+                        }
+                    }
                 }
                 // } 
                 
