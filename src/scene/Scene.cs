@@ -116,7 +116,7 @@ namespace RayTracer
                         zdepth = hit.Position.LengthSq();
                         storedHit = hit;
                     }
-                    if ((i == 300) && (j == 300))
+                    if ((i == 90) && (j == 295))
                     {
                         Console.WriteLine(entity);
                     }
@@ -138,16 +138,16 @@ namespace RayTracer
                     {
                         //
                         RayHit shwHit = entity.Intersect(shadowRay);
-                        if ((shwHit != null &&((light.Position-origin).LengthSq() > (shwHit.Position-origin).LengthSq())) )
+                        if ((shwHit != null &&((light.Position-origin).LengthSq() >= (shwHit.Position-origin).LengthSq())) )
                         {
-                            if ((i == 300) && (j == 300))
+                            if ((i == 90) && (j == 295))
                     {
                         Console.Write("shadow: ");
                         Console.WriteLine(entity.Material.Type);
                         Console.WriteLine(shwHit.Position);
 
                     }
-                            lum=0.3;
+                            lum=0;
 //                     Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
 // pixelColor +=  fixing*.1;
 

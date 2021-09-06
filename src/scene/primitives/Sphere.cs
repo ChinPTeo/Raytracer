@@ -45,7 +45,7 @@ namespace RayTracer
 
             //solve for intersection points
             Vector3 t1 = (tc - t1c) * ray.Direction;
-            Vector3 t2 = (tc + t1c) * ray.Direction;
+            // Vector3 t2 = (tc + t1c) * ray.Direction;
 
 
             return new RayHit(t1, (t1 - this.center).Normalized(), ray.Direction, this.material);
