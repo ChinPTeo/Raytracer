@@ -58,7 +58,7 @@ namespace RayTracer
             Vector3 origin = new Vector3(0, 0, 0);
             double imageAspectRatio = outputImage.Width / outputImage.Height; // assuming width > height 
             double scale = Math.Tan(fov / 2 * Math.PI / 180);
-            const int max_bounce = 10;
+            const int max_bounce = 15;
             // Initializing a 2D array of rays, origin at 0,0,0 and direction of pixel
             List<List<Ray>> rays = new List<List<Ray>>();
             for (int j = 0; j < outputImage.Height; j++)
@@ -127,12 +127,11 @@ namespace RayTracer
             // ONly null or triangles
             if (storedHit != null)
             {
-                double lum = 1;
                 // return newEntity.Material.Color;
-
+                Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
                 foreach (PointLight light in this.lights)
                 {
-
+                    shadowmap[light] = 1;
                     // Decide on what side the shadow ray should be spawned
                     Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
                     Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
@@ -140,66 +139,44 @@ namespace RayTracer
                     foreach (SceneEntity entity in this.entities)
                     {
                         RayHit shwHit = entity.Intersect(shadowRay);
-                        if ((i == 90) && (j == 295))
-                        {
-                            if (shwHit != null)
-                            {
-                                Console.Write("shadow: ");
-                                Console.WriteLine(entity);
-                                //b4
-                                Console.WriteLine(storedHit.Position);
 
-                                //after
-                                Console.WriteLine(origin);
-                                Console.Write("\n");
-
-                                Console.WriteLine(shadowRay.Direction);
-                                Console.WriteLine(shwHit.Position);
-                                Console.WriteLine(light.Position);
-
-                                Console.WriteLine((shwHit.Position - origin).LengthSq());
-                                Console.WriteLine((light.Position - origin).LengthSq());
-
-                            }
-                        }
-                        // if ((shwHit != null))
                         if ((shwHit != null && ((light.Position - origin).LengthSq() >= (shwHit.Position - origin).LengthSq())))
                         {
-                            lum = 0;
-
-
-                            //                     return pixelColor;
+                            shadowmap[light] = 0;
                         }
 
                     }
                 }
-                Material.MaterialType diffuse = Material.MaterialType.Diffuse;
-                Material.MaterialType reflective = Material.MaterialType.Reflective;
+                if (newEntity.Material.Type == Material.MaterialType.Diffuse)
+                {// Shadow
 
-                foreach (PointLight light in this.lights)
-                {
-
-
-                    // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
-                    lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized())) * lum;
-                    // Console.WriteLine(a_color);
-                    if (lum < 0)
+                    foreach (PointLight light in this.lights)
                     {
-                        lum = 0;
+                        // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
+                        double lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized())) * shadowmap[light];
+                        // Console.WriteLine(a_color);
+                        if (lum < 0)
+                        {
+                            lum = 0;
+                        }
+                        // Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
+
+                        pixelColor += light.Color * newEntity.Material.Color * lum;
+                        // pixelColor +=  fixing*.5;
+
+
                     }
-                    // Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
-
-                    pixelColor += light.Color * newEntity.Material.Color * lum;
-                    // pixelColor +=  fixing*.5;
-
-                    return pixelColor;
                 }
 
+                else if (newEntity.Material.Type == Material.MaterialType.Reflective)
+                {
+                    Ray reflectRay = new Ray(storedHit.Position, storedHit.Incident - 2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal);
+                    return Colorizer(reflectRay, bounce - 1, i, j);
+                }
                 // } 
 
                 // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){
-                //     Ray reflectRay = new Ray(storedHit.Position, storedHit.Incident - 2*storedHit.Incident.Dot(storedHit.Normal)*storedHit.Normal);
-                //     return Colorizer(reflectRay, bounce-1);
+                //     
                 // }
             }
             return pixelColor;
