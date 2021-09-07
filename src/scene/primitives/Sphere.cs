@@ -36,16 +36,27 @@ namespace RayTracer
             double tc = L.Dot(ray.Direction);
             if (tc < 0.0) { return null; }
 
+
             Vector3 d = (tc * ray.Direction) - L;
             if (d.Length() > this.radius) { return null; }
 
             //solve for t1c
             double t1c = Math.Sqrt((this.radius * this.radius) - (d.LengthSq()));
 
-            //solve for intersection points
-            Vector3 t1 = (tc - t1c) * ray.Direction;
-            Vector3 t2 = (tc + t1c) * ray.Direction;
+            Vector3 t1 = ((tc - t1c) * ray.Direction) + ray.Origin;
+            // Vector3 t2 = (tc + t1c) * ray.Direction;
+            // solve for intersection points
+            // if ((t1 - this.center).Length() > radius)
+            // {
+            //     Console.Write("tc ");
+            //     Console.WriteLine(tc);
 
+            //     Console.Write("t1c ");
+            //     Console.WriteLine(t1c);
+
+            //     Console.Write("t1 ");
+            //     Console.WriteLine(t1.Length());
+            // }
 
             return new RayHit(t1, (t1 - this.center).Normalized(), ray.Direction, this.material);
         }

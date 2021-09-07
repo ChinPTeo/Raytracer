@@ -40,7 +40,7 @@ namespace RayTracer
         /// <returns>Length of the vector squared</returns>
         public double LengthSq()
         {
-            return this.x * this.x + this.y * this.y + this.z * this.z;
+            return (this.x * this.x) + (this.y * this.y) + (this.z * this.z);
         }
 
         /// <summary>
