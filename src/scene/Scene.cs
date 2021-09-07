@@ -111,21 +111,44 @@ namespace RayTracer
                 RayHit hit = entity.Intersect(ray);
                 if (hit != null)
                 {
-                    // Selecting closest obj
-                    if ((zdepth == -1) || (zdepth > hit.Position.LengthSq()))
+                    if ((i == 199) && ((j == 188) || (j == 189)))
                     {
-                        newEntity = entity;
-                        zdepth = hit.Position.LengthSq();
-                        storedHit = hit;
+                        Console.Write(j);
+                        Console.Write(": ");
+                        Console.WriteLine(bounce);
+                        Console.Write(entity);
+                        Console.Write(": ");
+                        Console.WriteLine(entity.Material.Color);
+                        Console.Write("Position: ");
+                        Console.WriteLine(hit.Position);
+                        Console.Write("Origin: ");
+                        Console.WriteLine(ray.Origin);
+                        Console.WriteLine((hit.Position - ray.Origin).LengthSq());
+
+                        Console.WriteLine("=============================================================================");
+
+
+                    }
+                    // Selecting closest obj
+                    if ((zdepth == -1) || (zdepth > (hit.Position - ray.Origin).LengthSq()))
+                    {
+                        newEntity = entity;//Debug
+                        zdepth = (hit.Position - ray.Origin).LengthSq();
+                        storedHit = new RayHit(hit.Position, hit.Normal, hit.Incident, hit.Material);
+
+
                     }
 
 
                 }
             }
-            // ONly null or triangles
+
+
+
+            // Shading
             if (storedHit != null)
             {
-                // return newEntity.Material.Color;
+                // Shadows
                 Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
                 foreach (PointLight light in this.lights)
                 {
@@ -145,9 +168,9 @@ namespace RayTracer
 
                     }
                 }
-                if (newEntity.Material.Type == Material.MaterialType.Diffuse)
-                {// Shadow
-
+                if (storedHit.Material.Type == Material.MaterialType.Diffuse)
+                {
+                    // Diffuse lighting
                     foreach (PointLight light in this.lights)
                     {
                         // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
@@ -159,39 +182,17 @@ namespace RayTracer
                         }
                         // Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
 
-                        pixelColor += light.Color * newEntity.Material.Color * lum;
+                        pixelColor += light.Color * storedHit.Material.Color * lum;
                         // pixelColor +=  fixing*.5;
-
-
                     }
                 }
 
-                else if (newEntity.Material.Type == Material.MaterialType.Reflective)
+                else if (storedHit.Material.Type == Material.MaterialType.Reflective)
                 {
                     Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
 
-                    Ray reflectRay = new Ray(origin, (storedHit.Incident - 2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal).Normalized());
-                    if ((i == 126) && (j == 173))
-                    {
-                        Vector3 tset = new Vector3(-0.15, 0.2, 2);
-                        Console.WriteLine(newEntity);
-                        Console.WriteLine(reflectRay.Direction);
+                    Ray reflectRay = new Ray(origin, (storedHit.Incident - (2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal)));
 
-                    }
-                    if ((i == 126) && (j == 172))
-                    {
-                        Vector3 tset = new Vector3(-0.15, 0.2, 2);
-                        Console.WriteLine(newEntity);
-                        Console.WriteLine(reflectRay.Direction);
-
-                    }
-                    if ((i == 126) && (j == 171))
-                    {
-                        Vector3 tset = new Vector3(-0.15, 0.2, 2);
-                        Console.WriteLine(newEntity);
-                        Console.WriteLine(reflectRay.Direction);
-
-                    }
                     return Colorizer(reflectRay, bounce - 1, i, j);
                 }
                 // } 

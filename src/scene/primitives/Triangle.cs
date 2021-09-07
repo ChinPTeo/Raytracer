@@ -38,7 +38,7 @@ namespace RayTracer
             Vector3 vertice2 = v2 - v0;
             Vector3 normal = vertice1.Cross(vertice2);
             normal = normal.Normalized();
-            double kEpsilon = 0.1;
+            double kEpsilon = 0.09;
             // Step 1: finding P
 
             // check if ray and plane are parallel ?
@@ -58,7 +58,7 @@ namespace RayTracer
             Vector3 P = ray.Origin + t * ray.Direction;
 
             // Step 2: inside-outside test
-            Vector3 C; // vector perpendicular to triangle's plane 
+            Vector3 C = normal; // vector perpendicular to triangle's plane 
 
             // edge 0
             Vector3 edge0 = v1 - v0;
