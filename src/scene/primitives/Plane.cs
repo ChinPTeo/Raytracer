@@ -41,7 +41,8 @@ namespace RayTracer
             {
                 Vector3 position = ((this.center - ray.Origin).Dot(this.normal) / (ray.Direction).Dot(this.normal)) * ray.Direction;
                 // Console.WriteLine(position);
-                return new RayHit(position, this.normal, ray.Direction, this.material);
+
+                return new RayHit(position, (this.normal), ray.Direction, this.material);
             }
         }
 
@@ -52,7 +53,7 @@ namespace RayTracer
             if ((ray.Direction).Dot(this.normal) >= eps)
             {
                 return null;
-            } 
+            }
             else
             {
                 Vector3 position = ((this.center - ray.Origin).Dot(this.normal) / (ray.Direction).Dot(this.normal)) * ray.Direction;
