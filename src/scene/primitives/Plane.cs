@@ -39,7 +39,7 @@ namespace RayTracer
             }
             else
             {
-                Vector3 position = ((this.center - ray.Origin).Dot(this.normal) / (ray.Direction).Dot(this.normal)) * ray.Direction;
+                Vector3 position = (((this.center - ray.Origin).Dot(this.normal) / (ray.Direction).Dot(this.normal)) * ray.Direction) + ray.Origin;
                 // Console.WriteLine(position);
 
                 return new RayHit(position, (this.normal), ray.Direction, this.material);
