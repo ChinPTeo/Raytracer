@@ -37,7 +37,8 @@ namespace RayTracer
             Vector3 vertice1 = v1 - v0;
             Vector3 vertice2 = v2 - v0;
             Vector3 normal = vertice1.Cross(vertice2);
-            normal = normal.Normalized();
+            double denom = normal.Dot(normal);
+
             double kEpsilon = 0.09;
             // Step 1: finding P
 
@@ -52,13 +53,13 @@ namespace RayTracer
             // compute t (equation 3)
             double t = (v0 - ray.Origin).Dot(normal) / ray.Direction.Dot(normal);
             // check if the triangle is in behind the ray
-            if (Math.Abs(t) < kEpsilon) return null; // the triangle is behind 
+            if (t < kEpsilon) return null; // the triangle is behind 
 
             // compute the intersection point using equation 1
             Vector3 P = ray.Origin + t * ray.Direction;
 
             // Step 2: inside-outside test
-            Vector3 C = normal; // vector perpendicular to triangle's plane 
+            Vector3 C; // vector perpendicular to triangle's plane 
 
             // edge 0
             Vector3 edge0 = v1 - v0;
@@ -78,7 +79,7 @@ namespace RayTracer
             C = edge2.Cross(vp2);
             if (normal.Dot(C) < 0) return null; // P is on the right side; 
 
-            return new RayHit(P, normal, ray.Direction, this.material); // this ray hits the triangle 
+            return new RayHit(P, normal.Normalized(), ray.Direction, this.material); // this ray hits the triangle 
         }
 
         /// <summary>

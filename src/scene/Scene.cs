@@ -111,24 +111,7 @@ namespace RayTracer
                 RayHit hit = entity.Intersect(ray);
                 if (hit != null)
                 {
-                    if ((i == 199) && ((j == 188) || (j == 189)))
-                    {
-                        Console.Write(j);
-                        Console.Write(": ");
-                        Console.WriteLine(bounce);
-                        Console.Write(entity);
-                        Console.Write(": ");
-                        Console.WriteLine(entity.Material.Color);
-                        Console.Write("Position: ");
-                        Console.WriteLine(hit.Position);
-                        Console.Write("Origin: ");
-                        Console.WriteLine(ray.Origin);
-                        Console.WriteLine((hit.Position - ray.Origin).LengthSq());
 
-                        Console.WriteLine("=============================================================================");
-
-
-                    }
                     // Selecting closest obj
                     if ((zdepth == -1) || (zdepth > (hit.Position - ray.Origin).LengthSq()))
                     {
@@ -164,6 +147,25 @@ namespace RayTracer
                         if ((shwHit != null && ((light.Position - origin).LengthSq() >= (shwHit.Position - origin).LengthSq())))
                         {
                             shadowmap[light] = 0;
+
+                            if ((i == 163) && ((j == 119) || (j == 118)))
+                            {
+                                Console.Write(j);
+                                Console.Write(": ");
+                                Console.WriteLine(bounce);
+                                Console.Write(newEntity);
+                                Console.Write(": ");
+                                Console.WriteLine(newEntity.Material.Color);
+                                Console.Write("Position: ");
+                                Console.WriteLine(shwHit.Position);
+                                Console.Write("Origin: ");
+                                Console.WriteLine(ray.Origin);
+                                Console.WriteLine((shwHit.Position - ray.Origin).LengthSq());
+
+                                Console.WriteLine("=============================================================================");
+
+
+                            }
                         }
 
                     }
