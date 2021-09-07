@@ -171,9 +171,26 @@ namespace RayTracer
                     Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
 
                     Ray reflectRay = new Ray(origin, (storedHit.Incident - 2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal).Normalized());
-                    if ((i == 120) && (j == 170))
+                    if ((i == 126) && (j == 173))
                     {
-                        Console.WriteLine(origin);
+                        Vector3 tset = new Vector3(-0.15, 0.2, 2);
+                        Console.WriteLine(newEntity);
+                        Console.WriteLine(reflectRay.Direction);
+
+                    }
+                    if ((i == 126) && (j == 172))
+                    {
+                        Vector3 tset = new Vector3(-0.15, 0.2, 2);
+                        Console.WriteLine(newEntity);
+                        Console.WriteLine(reflectRay.Direction);
+
+                    }
+                    if ((i == 126) && (j == 171))
+                    {
+                        Vector3 tset = new Vector3(-0.15, 0.2, 2);
+                        Console.WriteLine(newEntity);
+                        Console.WriteLine(reflectRay.Direction);
+
                     }
                     return Colorizer(reflectRay, bounce - 1, i, j);
                 }
