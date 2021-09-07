@@ -98,6 +98,7 @@ namespace RayTracer
             Color pixelColor = new Color(0, 0, 0);
             if (bounce == 0)
             {
+                Console.WriteLine("its 0 knob");
                 return pixelColor;
             }
             SceneEntity newEntity = null;
@@ -117,10 +118,7 @@ namespace RayTracer
                         zdepth = hit.Position.LengthSq();
                         storedHit = hit;
                     }
-                    if ((i == 90) && (j == 295))
-                    {
-                        Console.WriteLine(entity);
-                    }
+
 
                 }
             }
@@ -170,7 +168,13 @@ namespace RayTracer
 
                 else if (newEntity.Material.Type == Material.MaterialType.Reflective)
                 {
-                    Ray reflectRay = new Ray(storedHit.Position, storedHit.Incident - 2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal);
+                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
+
+                    Ray reflectRay = new Ray(origin, (storedHit.Incident - 2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal).Normalized());
+                    if ((i == 120) && (j == 170))
+                    {
+                        Console.WriteLine(origin);
+                    }
                     return Colorizer(reflectRay, bounce - 1, i, j);
                 }
                 // } 
