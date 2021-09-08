@@ -197,6 +197,18 @@ namespace RayTracer
 
                     return Colorizer(reflectRay, bounce - 1, i, j);
                 }
+                else if (storedHit.Material.Type == Material.MaterialType.Refractive)
+                {
+                    // Generate a ray inside the sphere and fire it
+                    Vector3 origin = storedHit.Position + -storedHit.Normal * 0.005;
+
+                    // Ray refractRay = new Ray(origin, )
+
+                    //
+
+                    Console.WriteLine(ray.Etai);
+
+                }
                 // } 
 
                 // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){

@@ -9,6 +9,7 @@ namespace RayTracer
     {
         private readonly Vector3 origin;
         private readonly Vector3 direction;
+        private readonly double etai;
 
         /// <summary>
         /// Construct a new ray.
@@ -19,6 +20,13 @@ namespace RayTracer
         {
             this.origin = origin;
             this.direction = direction;
+            this.etai = 1;
+        }
+        public Ray(Vector3 origin, Vector3 direction, Double etai)
+        {
+            this.origin = origin;
+            this.direction = direction;
+            this.etai = etai;
         }
 
         /// <summary>
@@ -30,5 +38,6 @@ namespace RayTracer
         /// The direction of the ray.
         /// </summary>
         public Vector3 Direction { get { return this.direction; } }
+        public Double Etai { get { return this.etai; } }
     }
 }
