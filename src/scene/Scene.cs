@@ -98,8 +98,8 @@ namespace RayTracer
             Color pixelColor = new Color(0, 0, 0);
             if (bounce == 0)
             {
-                Console.WriteLine("its 0 knob");
-                return pixelColor;
+                // Console.WriteLine("its 0 knob");
+                return new Color(ray.Direction.X, ray.Direction.Y, ray.Direction.Z); ;
             }
             SceneEntity newEntity = null;
             double zdepth = -1;
@@ -118,11 +118,7 @@ namespace RayTracer
                         newEntity = entity;//Debug
                         zdepth = (hit.Position - ray.Origin).LengthSq();
                         storedHit = new RayHit(hit.Position, hit.Normal, hit.Incident, hit.Material);
-
-
                     }
-
-
                 }
             }
 
@@ -191,22 +187,18 @@ namespace RayTracer
 
                 else if (storedHit.Material.Type == Material.MaterialType.Reflective)
                 {
-                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
-
-                    Ray reflectRay = new Ray(origin, (storedHit.Incident - (2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal)));
-
-                    return Colorizer(reflectRay, bounce - 1, i, j);
+                    pixelColor = reflect(storedHit, bounce, i, j);
                 }
                 else if (storedHit.Material.Type == Material.MaterialType.Refractive)
                 {
                     // Generate a ray inside the sphere and fire it
-                    Vector3 origin = storedHit.Position + -storedHit.Normal * 0.005;
 
                     // Ray refractRay = new Ray(origin, )
+                    pixelColor = refract(storedHit, bounce, i, j);
 
                     //
 
-                    Console.WriteLine(ray.Etai);
+                    // Console.WriteLine(ray.Etai);
 
                 }
                 // } 
@@ -217,6 +209,53 @@ namespace RayTracer
             }
             return pixelColor;
         }
+
+        //Reflect
+        Color reflect(RayHit storedHit, int bounce, int i, int j)
+        {
+            Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
+
+            Ray reflectRay = new Ray(origin, (storedHit.Incident - (2 * storedHit.Incident.Dot(storedHit.Normal) * storedHit.Normal)));
+
+            return Colorizer(reflectRay, bounce - 1, i, j);
+        }
+
+        Color refract(RayHit storedHit, int bounce, int i, int j)
+        {
+            Vector3 I = storedHit.Incident;
+            Vector3 N = storedHit.Normal;
+            double ior = storedHit.Material.RefractiveIndex;
+            double cosi = Math.Clamp(I.Dot(N), -1, 1);
+            double etai = 1, etat = ior;
+            Vector3 n = N;
+            if (cosi < 0) { cosi = -cosi; }
+            else
+            {
+                double temp = etai;
+                etai = etat;
+                etat = etai;
+                n = -N;
+            }
+            double eta = etai / etat;
+            double k = 1 - eta * eta * (1 - cosi * cosi);
+            Color pixelColor = new Color(0, 0, 0);
+            if (k < 0)
+            {
+                reflect(storedHit, bounce, i, j);
+            }
+            else
+            {
+                Vector3 reflectDir = eta * I + (eta * cosi - Math.Sqrt(k)) * n;
+                Vector3 origin = storedHit.Position + n * 0.005;
+                Ray ReflectRay = new Ray(origin, reflectDir);
+                pixelColor = Colorizer(ReflectRay, bounce - 1, i, j);
+
+            }
+
+            return pixelColor;
+        }
+
+
         // F
         Vector3 random_in_unit_sphere()
         {
