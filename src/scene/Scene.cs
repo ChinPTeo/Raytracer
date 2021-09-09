@@ -153,10 +153,17 @@ namespace RayTracer
                 else if (storedHit.Material.Type == Material.MaterialType.Diffuse)
                 {
                     // Shadows
-                    Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
+                    // Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
+                    // foreach (PointLight light in this.lights)
+                    // {
+                    //     shadowmap[light] = 1;
+
+                    // }
+                    // Diffuse lighting
                     foreach (PointLight light in this.lights)
                     {
-                        shadowmap[light] = 1;
+                        double lum = 1;
+
                         // Decide on what side the shadow ray should be spawned
                         Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
                         Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
@@ -167,27 +174,21 @@ namespace RayTracer
 
                             if ((shwHit != null && ((light.Position - origin).LengthSq() >= (shwHit.Position - origin).LengthSq())))
                             {
-                                shadowmap[light] = 0;
+                                lum = 0;
 
 
                             }
 
                         }
-                    }
-                    // Diffuse lighting
-                    foreach (PointLight light in this.lights)
-                    {
-                        // pixelColor = entity.Material.Color * (new Color(0.5, 0.5, 0.5) * Colorizer(new_ray, bounce - 1));
-                        double lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized())) * shadowmap[light];
-                        // Console.WriteLine(a_color);
+
+
+                        lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized())) * lum;
                         if (lum < 0)
                         {
                             lum = 0;
                         }
-                        // Color fixing = new Color(storedHit.Normal.X + 1, storedHit.Normal.Y + 1, storedHit.Normal.Z + 1);
 
                         pixelColor += light.Color * storedHit.Material.Color * lum;
-                        // pixelColor +=  fixing*.5;
                     }
                 }
                 // }
