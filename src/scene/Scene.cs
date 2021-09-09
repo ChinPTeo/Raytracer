@@ -127,43 +127,21 @@ namespace RayTracer
             // Shading
             if (storedHit != null)
             {
-
-
                 if (storedHit.Material.Type == Material.MaterialType.Reflective)
                 {
                     pixelColor += Reflect(storedHit, bounce, i, j);
                 }
                 else if (storedHit.Material.Type == Material.MaterialType.Refractive)
                 {
-                    // Generate a ray inside the sphere and fire it
-
-                    // Ray refractRay = new Ray(origin, )
-
                     pixelColor += Refract(storedHit, bounce, i, j);
-
-                    //
-
-                    // Console.WriteLine(ray.Etai);
-
                 }
-                // } 
-
-                // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){
-                //     
                 else if (storedHit.Material.Type == Material.MaterialType.Diffuse)
                 {
-                    // Shadows
-                    // Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
-                    // foreach (PointLight light in this.lights)
-                    // {
-                    //     shadowmap[light] = 1;
-
-                    // }
                     // Diffuse lighting
                     foreach (PointLight light in this.lights)
                     {
+                        // Shadows
                         double lum = 1;
-
                         // Decide on what side the shadow ray should be spawned
                         Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
                         Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
@@ -175,14 +153,11 @@ namespace RayTracer
                             if ((shwHit != null && ((light.Position - origin).LengthSq() >= (shwHit.Position - origin).LengthSq())))
                             {
                                 lum = 0;
-
-
                             }
-
                         }
 
-
                         lum = (storedHit.Normal.Dot((light.Position - storedHit.Position).Normalized())) * lum;
+                        // Preventing underflow
                         if (lum < 0)
                         {
                             lum = 0;
@@ -191,12 +166,10 @@ namespace RayTracer
                         pixelColor += light.Color * storedHit.Material.Color * lum;
                     }
                 }
-                // }
             }
             return pixelColor;
         }
 
-        //Reflect
         Color Reflect(RayHit storedHit, int bounce, int i, int j)
         {
             Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
@@ -240,6 +213,7 @@ namespace RayTracer
 
             }
 
+            // Detect going in(<0) or out(>0)
             if (cosi < 0)
             {
                 if ((i == 268) && ((j == 254))) { Console.WriteLine("outside"); }
@@ -255,11 +229,25 @@ namespace RayTracer
             double eta = etai / etat;
             double k = 1 - eta * eta * (1 - cosi * cosi);
             Color pixelColor = new Color(0, 0, 0);
-            if (k < 0)
-            {
-                Reflect(storedHit, bounce, i, j);
-            }
-            else
+            double sint = etai / etat * Math.Sqrt(Math.Max(0.0, 1 - cosi * cosi));
+            double kr = 1;
+
+            // // Total internal reflection
+            // if (sint >= 1)
+            // {
+            //     kr = 1;
+            // }
+            // else
+            // {
+            //     double cost = Math.Sqrt(Math.Max(0.0, 1 - sint * sint));
+            //     cosi = Math.Abs(cosi);
+            //     double Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+            //     double Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+            //     kr = (Rs * Rs + Rp * Rp) / 2;
+            // }
+
+
+            if (k >= 0)
             {
                 Vector3 reflectDir = eta * I + (eta * cosi - Math.Sqrt(k)) * n;
                 Vector3 origin = storedHit.Position - n * 0.005;
@@ -274,10 +262,6 @@ namespace RayTracer
         // {
         //     return
         // }
-
-
-
-        // F
         Vector3 random_in_unit_sphere()
         {
             var rand = new Random();
