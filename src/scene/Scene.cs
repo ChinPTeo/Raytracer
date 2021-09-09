@@ -59,36 +59,41 @@ namespace RayTracer
             double imageAspectRatio = outputImage.Width / outputImage.Height; // assuming width > height 
             double scale = Math.Tan(fov / 2 * Math.PI / 180);
             const int max_bounce = 15;
+            int samples_per_pixel = 1;
             // Initializing a 2D array of rays, origin at 0,0,0 and direction of pixel
             List<List<Ray>> rays = new List<List<Ray>>();
             for (int j = 0; j < outputImage.Height; j++)
             {
                 for (int i = 0; i < outputImage.Width; i++)
                 {
-
-                    double x = (2 * ((i + 0.5) / outputImage.Width) - 1) * scale * imageAspectRatio;
-                    double y = (1 - 2 * ((j + 0.5) / outputImage.Height)) * scale;
-                    Vector3 rayDirection = new Vector3(x, y, 1);
-                    rayDirection = rayDirection - origin;
-                    rayDirection = rayDirection.Normalized();
-                    Ray ray = new Ray(origin, rayDirection);
+                    Color pixelColor = new Color(0, 0, 0);
+                    for (int s = 0; s < samples_per_pixel; s++)
+                    {
+                        double x, y;
+                        if (samples_per_pixel == 1)
+                        {
+                            x = (2 * ((i + 0.5) / outputImage.Width) - 1) * scale * imageAspectRatio;
+                            y = (1 - 2 * ((j + 0.5) / outputImage.Height)) * scale;
+                        }
+                        else
+                        {
+                            x = (2 * ((i + 0.5 + AAhelper()) / outputImage.Width) - 1) * scale * imageAspectRatio;
+                            y = (1 - 2 * ((j + 0.5 + AAhelper()) / outputImage.Height)) * scale;
+                        }
+                        Vector3 rayDirection = new Vector3(x, y, 1);
+                        rayDirection = rayDirection - origin;
+                        rayDirection = rayDirection.Normalized();
+                        Ray ray = new Ray(origin, rayDirection);
+                        pixelColor += Colorizer(ray, max_bounce, i, j);
+                    }
 
                     //     Console.WriteLine(ray.Direction);
 
 
-                    Color pixel_color = Colorizer(ray, max_bounce, i, j);
-                    outputImage.SetPixel(i, j, pixel_color);
+                    outputImage.SetPixel(i, j, pixelColor / samples_per_pixel);
 
 
                 }
-
-                /*            double imageAspectRatio = options.width / (double)options.height;*/
-
-                /*OutputImageWidth;
-                    OutputImageHeight;*/
-                // CHeck Hit?
-                // Profit
-
             }
 
         }
@@ -270,6 +275,18 @@ namespace RayTracer
                 Vector3 p = new Vector3(rand.NextDouble() * 2 - 1, rand.NextDouble() * 2 - 1, rand.NextDouble() * 2 - 1);
                 if (p.LengthSq() >= 1) { continue; }
                 return p;
+            }
+        }
+
+        double AAhelper()
+        {
+            var rand = new Random();
+
+            while (true)
+            {
+                double p = rand.NextDouble() * 2 - 1;
+                if (p == 1) { continue; }
+                return p / 3;
             }
         }
     }
