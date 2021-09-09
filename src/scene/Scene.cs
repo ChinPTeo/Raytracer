@@ -127,30 +127,53 @@ namespace RayTracer
             // Shading
             if (storedHit != null)
             {
-                // Shadows
-                Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
-                foreach (PointLight light in this.lights)
+
+
+                if (storedHit.Material.Type == Material.MaterialType.Reflective)
                 {
-                    shadowmap[light] = 1;
-                    // Decide on what side the shadow ray should be spawned
-                    Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
-                    Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
+                    pixelColor += Reflect(storedHit, bounce, i, j);
+                }
+                else if (storedHit.Material.Type == Material.MaterialType.Refractive)
+                {
+                    // Generate a ray inside the sphere and fire it
 
-                    foreach (SceneEntity entity in this.entities)
+                    // Ray refractRay = new Ray(origin, )
+
+                    pixelColor += Refract(storedHit, bounce, i, j);
+
+                    //
+
+                    // Console.WriteLine(ray.Etai);
+
+                }
+                // } 
+
+                // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){
+                //     
+                else if (storedHit.Material.Type == Material.MaterialType.Diffuse)
+                {
+                    // Shadows
+                    Dictionary<PointLight, int> shadowmap = new Dictionary<PointLight, int>();
+                    foreach (PointLight light in this.lights)
                     {
-                        RayHit shwHit = entity.Intersect(shadowRay);
+                        shadowmap[light] = 1;
+                        // Decide on what side the shadow ray should be spawned
+                        Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
+                        Ray shadowRay = new Ray(origin, (light.Position - origin).Normalized());
 
-                        if ((shwHit != null && ((light.Position - origin).LengthSq() >= (shwHit.Position - origin).LengthSq())))
+                        foreach (SceneEntity entity in this.entities)
                         {
-                            shadowmap[light] = 0;
+                            RayHit shwHit = entity.Intersect(shadowRay);
 
+                            if ((shwHit != null && ((light.Position - origin).LengthSq() >= (shwHit.Position - origin).LengthSq())))
+                            {
+                                shadowmap[light] = 0;
+
+
+                            }
 
                         }
-
                     }
-                }
-                if (storedHit.Material.Type == Material.MaterialType.Diffuse)
-                {
                     // Diffuse lighting
                     foreach (PointLight light in this.lights)
                     {
@@ -167,35 +190,13 @@ namespace RayTracer
                         // pixelColor +=  fixing*.5;
                     }
                 }
-
-                else if (storedHit.Material.Type == Material.MaterialType.Reflective)
-                {
-                    pixelColor = reflect(storedHit, bounce, i, j);
-                }
-                else if (storedHit.Material.Type == Material.MaterialType.Refractive)
-                {
-                    // Generate a ray inside the sphere and fire it
-
-                    // Ray refractRay = new Ray(origin, )
-
-                    pixelColor = refract(storedHit, bounce, i, j);
-
-                    //
-
-                    // Console.WriteLine(ray.Etai);
-
-                }
-                // } 
-
-                // else if (newEntity.Material.Type == (Material.MaterialType.Reflective)){
-                //     
                 // }
             }
             return pixelColor;
         }
 
         //Reflect
-        Color reflect(RayHit storedHit, int bounce, int i, int j)
+        Color Reflect(RayHit storedHit, int bounce, int i, int j)
         {
             Vector3 origin = storedHit.Position + storedHit.Normal * 0.005;
 
@@ -204,7 +205,7 @@ namespace RayTracer
             return Colorizer(reflectRay, bounce - 1, i, j);
         }
 
-        Color refract(RayHit storedHit, int bounce, int i, int j)
+        Color Refract(RayHit storedHit, int bounce, int i, int j)
         {
             Vector3 I = storedHit.Incident;
             Vector3 N = storedHit.Normal;
@@ -255,7 +256,7 @@ namespace RayTracer
             Color pixelColor = new Color(0, 0, 0);
             if (k < 0)
             {
-                reflect(storedHit, bounce, i, j);
+                Reflect(storedHit, bounce, i, j);
             }
             else
             {
@@ -267,6 +268,12 @@ namespace RayTracer
             }
             return pixelColor;
         }
+
+        // Color Shadow(RayHit storedHit, int bounce, int i, int j)
+        // {
+        //     return
+        // }
+
 
 
         // F
