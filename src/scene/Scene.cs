@@ -212,7 +212,37 @@ namespace RayTracer
             double cosi = Math.Clamp(I.Dot(N), -1, 1);
             double etai = 1, etat = ior;
             Vector3 n = N;
-            if (cosi < 0) { cosi = -cosi; }
+
+            if ((i == 268) && ((j == 254)))
+            {
+                Console.Write(j);
+                Console.Write(": ");
+                Console.WriteLine(bounce);
+                Console.Write("Normal");
+                Console.Write(": ");
+                Console.WriteLine(n);
+                Console.Write("Cosi");
+                Console.Write(": ");
+                Console.WriteLine(cosi);
+                // Console.WriteLine(newEntity.Material.Color);
+                // Console.Write("Origin: ");
+                // Console.WriteLine(ReflectRay.Origin);
+                // Console.Write("Direction: ");
+                // Console.WriteLine(ReflectRay.Direction);
+                Console.Write("Incidence: ");
+                Console.WriteLine(storedHit.Incident);
+                // Console.WriteLine();
+
+                Console.WriteLine("=============================================================================");
+
+
+            }
+
+            if (cosi < 0)
+            {
+                if ((i == 268) && ((j == 254))) { Console.WriteLine("outside"); }
+                cosi = -cosi;
+            }
             else
             {
                 double temp = etai;
@@ -225,34 +255,14 @@ namespace RayTracer
             Color pixelColor = new Color(0, 0, 0);
             if (k < 0)
             {
-                Console.WriteLine("pepega");
                 reflect(storedHit, bounce, i, j);
             }
             else
             {
                 Vector3 reflectDir = eta * I + (eta * cosi - Math.Sqrt(k)) * n;
-                Vector3 origin = storedHit.Position + n * 0.005;
-                Ray ReflectRay = new Ray(origin, reflectDir);
-                if ((i == 268) && ((j == 254)))
-                {
-                    Console.Write(j);
-                    Console.Write(": ");
-                    Console.WriteLine(bounce);
-                    // Console.Write(newEntity);
-                    // Console.Write(": ");
-                    // Console.WriteLine(newEntity.Material.Color);
-                    Console.Write("Origin: ");
-                    Console.WriteLine(ReflectRay.Origin);
-                    Console.Write("Direction: ");
-                    Console.WriteLine(ReflectRay.Direction);
-                    Console.Write("Incidence: ");
-                    Console.WriteLine(storedHit.Incident);
-                    // Console.WriteLine();
+                Vector3 origin = storedHit.Position - n * 0.005;
+                Ray ReflectRay = new Ray(origin, reflectDir.Normalized());
 
-                    Console.WriteLine("=============================================================================");
-
-
-                }
                 pixelColor = Colorizer(ReflectRay, bounce - 1, i, j);
             }
             return pixelColor;
