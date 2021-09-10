@@ -251,10 +251,11 @@ namespace RayTracer
                 refractColor = Colorizer(RefractRay, bounce - 1, i, j);
             }
 
-            reflectColor = Reflect(storedHit, bounce - 1, i, j);
+            reflectColor = Reflect(storedHit, bounce, i, j);
 
 
             return (reflectColor * kr) + (refractColor * (1 - kr));
+            // return refractColor;
         }
 
 
