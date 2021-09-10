@@ -186,16 +186,9 @@ namespace RayTracer
 
         Color Refract(RayHit storedHit, int bounce, int i, int j)
         {
-            Vector3 I = storedHit.Incident;
-            Vector3 N = storedHit.Normal;
-            double cosi = Math.Clamp(I.Dot(N), -1, 1);
+            double cosi = Math.Clamp(storedHit.Incident.Dot(storedHit.Normal), -1, 1);
             double etai = 1, etat = storedHit.Material.RefractiveIndex;
-            Vector3 n = N;
-
-            // if (bounce < 13) { Console.WriteLine("spoeufhp"); }
-
-
-            // if ((i == 210) && ((j == 255))) { Console.WriteLine(cosi); }
+            Vector3 n = storedHit.Normal;
 
             // Detect going in(<0) or out(>0)
             if (cosi < 0)
@@ -207,80 +200,96 @@ namespace RayTracer
                 double temp = etai;
                 etai = etat;
                 etat = temp;
-                n = -N;
+                n = -storedHit.Normal;
             }
-
 
             double eta = etai / etat;
             double k = 1 - eta * eta * (1 - cosi * cosi);
-            Color pixelColor = new Color(0, 0, 0);
-            // double sint = eta * Math.Sqrt(Math.Max(0.0, 1 - cosi * cosi));
-            double kr = 1;
+            Color refractColor = new Color(0, 0, 0);
+            Color reflectColor = new Color(0, 0, 0);
 
-            // // Total internal reflection
-            // if (sint >= 1)
-            // {
-            //     kr = 1;
-            // }
-            // else
-            // {
-            //     double cost = Math.Sqrt(Math.Max(0.0, 1 - sint * sint));
-            //     cosi = Math.Abs(cosi);
-            //     double Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
-            //     double Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
-            //     kr = (Rs * Rs + Rp * Rp) / 2;
-            // }
-            // if ((i == 200) && ((j == 246)))
-            // {
-            //     Console.Write(j);
-            //     Console.Write(": ");
-            //     Console.WriteLine(bounce);
-            //     Console.Write("Normal");
-            //     Console.Write(": ");
-            //     Console.WriteLine(n);
-            //     Console.Write("k");
-            //     Console.Write(": ");
-            //     Console.WriteLine(k);
-            //     // Console.WriteLine(newEntity.Material.Color);
-            //     Console.Write("Cosi: ");
-            //     Console.WriteLine(cosi);
-            //     Console.Write("Eta: ");
-            //     Console.WriteLine(eta);
-            //     Console.Write("Etai: ");
-            //     Console.WriteLine(etai);
-            //     Console.Write("Etat: ");
-            //     Console.WriteLine(etat);
-            //     Console.Write("Origin: ");
-            //     Console.WriteLine(storedHit.Position);
-            //     // Console.Write("Direction: ");
-            //     // Console.WriteLine(ReflectRay.Direction);
-            //     Console.Write("Incidence: ");
-            //     Console.WriteLine(storedHit.Incident);
-            //     // Console.WriteLine();
+            double kr = Fresnel(storedHit, bounce, i, j);
 
-            //     Console.WriteLine("=============================================================================");
-            // }
-
-            if (k >= 0)
+            if ((i == 200) && ((j == 246)))
             {
-                Vector3 reflectDir = eta * I + (eta * cosi - Math.Sqrt(k)) * n;
+                // Console.Write(j);
+                // Console.Write(": ");
+                // Console.WriteLine(bounce);
+                // Console.Write("Normal");
+                // Console.Write(": ");
+                // Console.WriteLine(n);
+                // Console.Write("k");
+                // Console.Write(": ");
+                // Console.WriteLine(k);
+                // // Console.WriteLine(newEntity.Material.Color);
+                // Console.Write("Cosi: ");
+                // Console.WriteLine(cosi);
+                // Console.Write("Eta: ");
+                // Console.WriteLine(eta);
+                // Console.Write("Etai: ");
+                // Console.WriteLine(etai);
+                // Console.Write("Etat: ");
+                // Console.WriteLine(etat);
+                // Console.Write("Origin: ");
+                // Console.WriteLine(storedHit.Position);
+                // // Console.Write("Direction: ");
+                // // Console.WriteLine(ReflectRay.Direction);
+                // Console.Write("Incidence: ");
+                // Console.WriteLine(storedHit.Incident);
+                // // Console.WriteLine();
+
+                Console.WriteLine("=============================================================================");
+
+            }
+
+            if (kr < 1)
+            {
+                Vector3 reflectDir = eta * storedHit.Incident + (eta * cosi - Math.Sqrt(k)) * n;
                 Vector3 origin = storedHit.Position - n * 0.005;
                 Ray RefractRay = new Ray(origin, reflectDir.Normalized());
 
-                pixelColor = Colorizer(RefractRay, bounce - 1, i, j);
+                refractColor = Colorizer(RefractRay, bounce - 1, i, j);
+            }
+
+            reflectColor = Reflect(storedHit, bounce - 1, i, j);
+
+
+            return (reflectColor * kr) + (refractColor * (1 - kr));
+        }
+
+
+        double Fresnel(RayHit storedHit, int bounce, int i, int j)
+        {
+            double cosi = Math.Clamp(storedHit.Incident.Dot(storedHit.Normal), -1, 1);
+            double etai = 1, etat = storedHit.Material.RefractiveIndex;
+
+            // Detect going in(<0) or out(>0)
+            if (cosi > 0)
+            {
+                double temp = etai;
+                etai = etat;
+                etat = temp;
+            }
+            double sint = (etai / etat) * Math.Sqrt(Math.Max(0.0, 1 - cosi * cosi));
+
+            double kr = -99;
+
+            // Total internal reflection
+            if (sint >= 1)
+            {
+                kr = 1;
             }
             else
             {
-                Console.WriteLine("test");
-                Reflect(storedHit, bounce - 1, i, j);
+                double cost = Math.Sqrt(Math.Max(0.0, 1 - sint * sint));
+                cosi = Math.Abs(cosi);
+                double Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+                double Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+                kr = (Rs * Rs + Rp * Rp) / 2;
             }
-            return pixelColor;
-        }
 
-        // Color Shadow(RayHit storedHit, int bounce, int i, int j)
-        // {
-        //     return
-        // }
+            return kr;
+        }
         Vector3 random_in_unit_sphere()
         {
             var rand = new Random();
