@@ -59,36 +59,41 @@ namespace RayTracer
             double imageAspectRatio = outputImage.Width / outputImage.Height; // assuming width > height 
             double scale = Math.Tan(fov / 2 * Math.PI / 180);
             const int max_bounce = 15;
+            int samples_per_pixel = 1;
             // Initializing a 2D array of rays, origin at 0,0,0 and direction of pixel
             List<List<Ray>> rays = new List<List<Ray>>();
             for (int j = 0; j < outputImage.Height; j++)
             {
                 for (int i = 0; i < outputImage.Width; i++)
                 {
-
-                    double x = (2 * ((i + 0.5) / outputImage.Width) - 1) * scale * imageAspectRatio;
-                    double y = (1 - 2 * ((j + 0.5) / outputImage.Height)) * scale;
-                    Vector3 rayDirection = new Vector3(x, y, 1);
-                    rayDirection = rayDirection - origin;
-                    rayDirection = rayDirection.Normalized();
-                    Ray ray = new Ray(origin, rayDirection);
+                    Color pixelColor = new Color(0, 0, 0);
+                    for (int s = 0; s < samples_per_pixel; s++)
+                    {
+                        double x, y;
+                        if (samples_per_pixel == 1)
+                        {
+                            x = (2 * ((i + 0.5) / outputImage.Width) - 1) * scale * imageAspectRatio;
+                            y = (1 - 2 * ((j + 0.5) / outputImage.Height)) * scale;
+                        }
+                        else
+                        {
+                            x = (2 * ((i + 0.5 + AAhelper()) / outputImage.Width) - 1) * scale * imageAspectRatio;
+                            y = (1 - 2 * ((j + 0.5 + AAhelper()) / outputImage.Height)) * scale;
+                        }
+                        Vector3 rayDirection = new Vector3(x, y, 1);
+                        rayDirection = rayDirection - origin;
+                        rayDirection = rayDirection.Normalized();
+                        Ray ray = new Ray(origin, rayDirection);
+                        pixelColor += Colorizer(ray, max_bounce, i, j);
+                    }
 
                     //     Console.WriteLine(ray.Direction);
 
 
-                    Color pixel_color = Colorizer(ray, max_bounce, i, j);
-                    outputImage.SetPixel(i, j, pixel_color);
+                    outputImage.SetPixel(i, j, pixelColor / samples_per_pixel);
 
 
                 }
-
-                /*            double imageAspectRatio = options.width / (double)options.height;*/
-
-                /*OutputImageWidth;
-                    OutputImageHeight;*/
-                // CHeck Hit?
-                // Profit
-
             }
 
         }
@@ -183,53 +188,33 @@ namespace RayTracer
         {
             Vector3 I = storedHit.Incident;
             Vector3 N = storedHit.Normal;
-            double ior = storedHit.Material.RefractiveIndex;
             double cosi = Math.Clamp(I.Dot(N), -1, 1);
-            double etai = 1, etat = ior;
+            double etai = 1, etat = storedHit.Material.RefractiveIndex;
             Vector3 n = N;
 
-            if ((i == 268) && ((j == 254)))
-            {
-                Console.Write(j);
-                Console.Write(": ");
-                Console.WriteLine(bounce);
-                Console.Write("Normal");
-                Console.Write(": ");
-                Console.WriteLine(n);
-                Console.Write("Cosi");
-                Console.Write(": ");
-                Console.WriteLine(cosi);
-                // Console.WriteLine(newEntity.Material.Color);
-                // Console.Write("Origin: ");
-                // Console.WriteLine(ReflectRay.Origin);
-                // Console.Write("Direction: ");
-                // Console.WriteLine(ReflectRay.Direction);
-                Console.Write("Incidence: ");
-                Console.WriteLine(storedHit.Incident);
-                // Console.WriteLine();
-
-                Console.WriteLine("=============================================================================");
+            // if (bounce < 13) { Console.WriteLine("spoeufhp"); }
 
 
-            }
+            // if ((i == 210) && ((j == 255))) { Console.WriteLine(cosi); }
 
             // Detect going in(<0) or out(>0)
             if (cosi < 0)
             {
-                if ((i == 268) && ((j == 254))) { Console.WriteLine("outside"); }
                 cosi = -cosi;
             }
             else
             {
                 double temp = etai;
                 etai = etat;
-                etat = etai;
+                etat = temp;
                 n = -N;
             }
+
+
             double eta = etai / etat;
             double k = 1 - eta * eta * (1 - cosi * cosi);
             Color pixelColor = new Color(0, 0, 0);
-            double sint = etai / etat * Math.Sqrt(Math.Max(0.0, 1 - cosi * cosi));
+            // double sint = eta * Math.Sqrt(Math.Max(0.0, 1 - cosi * cosi));
             double kr = 1;
 
             // // Total internal reflection
@@ -245,15 +230,49 @@ namespace RayTracer
             //     double Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
             //     kr = (Rs * Rs + Rp * Rp) / 2;
             // }
+            // if ((i == 200) && ((j == 246)))
+            // {
+            //     Console.Write(j);
+            //     Console.Write(": ");
+            //     Console.WriteLine(bounce);
+            //     Console.Write("Normal");
+            //     Console.Write(": ");
+            //     Console.WriteLine(n);
+            //     Console.Write("k");
+            //     Console.Write(": ");
+            //     Console.WriteLine(k);
+            //     // Console.WriteLine(newEntity.Material.Color);
+            //     Console.Write("Cosi: ");
+            //     Console.WriteLine(cosi);
+            //     Console.Write("Eta: ");
+            //     Console.WriteLine(eta);
+            //     Console.Write("Etai: ");
+            //     Console.WriteLine(etai);
+            //     Console.Write("Etat: ");
+            //     Console.WriteLine(etat);
+            //     Console.Write("Origin: ");
+            //     Console.WriteLine(storedHit.Position);
+            //     // Console.Write("Direction: ");
+            //     // Console.WriteLine(ReflectRay.Direction);
+            //     Console.Write("Incidence: ");
+            //     Console.WriteLine(storedHit.Incident);
+            //     // Console.WriteLine();
 
+            //     Console.WriteLine("=============================================================================");
+            // }
 
             if (k >= 0)
             {
                 Vector3 reflectDir = eta * I + (eta * cosi - Math.Sqrt(k)) * n;
                 Vector3 origin = storedHit.Position - n * 0.005;
-                Ray ReflectRay = new Ray(origin, reflectDir.Normalized());
+                Ray RefractRay = new Ray(origin, reflectDir.Normalized());
 
-                pixelColor = Colorizer(ReflectRay, bounce - 1, i, j);
+                pixelColor = Colorizer(RefractRay, bounce - 1, i, j);
+            }
+            else
+            {
+                Console.WriteLine("test");
+                Reflect(storedHit, bounce - 1, i, j);
             }
             return pixelColor;
         }
@@ -270,6 +289,18 @@ namespace RayTracer
                 Vector3 p = new Vector3(rand.NextDouble() * 2 - 1, rand.NextDouble() * 2 - 1, rand.NextDouble() * 2 - 1);
                 if (p.LengthSq() >= 1) { continue; }
                 return p;
+            }
+        }
+
+        double AAhelper()
+        {
+            var rand = new Random();
+
+            while (true)
+            {
+                double p = rand.NextDouble() * 2 - 1;
+                if (p == 1) { continue; }
+                return p / 3;
             }
         }
     }
