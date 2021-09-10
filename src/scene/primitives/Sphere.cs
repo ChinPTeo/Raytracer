@@ -42,9 +42,8 @@ namespace RayTracer
             Vector3 t1 = new Vector3(0, 0, 0);
             if (L.LengthSq() < (this.radius * this.radius))
             {
-                // Console.WriteLine("inter");
                 t1 = (tc + tc) * ray.Direction + ray.Origin;
-                return new RayHit(t1, (t1 - this.center).Normalized(), ray.Direction, this.material);
+                return new RayHit(t1, ((t1 - this.center).Normalized()), ray.Direction, this.material);
             }
 
 

@@ -14,7 +14,7 @@ Sphere "MirrorSphere" (-0.15, 0.2, 2) 0.35 "MirrorMat"
 Sphere "GlassSphere" (0.25, -0.2, 1.5) 0.25 "GlassMat"
 
 Plane "Floor" (0, -1, 0) (0, 1, 0) "GreyMat"
-Plane "Roof" (0, 1, 0) (0, -1, 0) "RedderMat"
+Plane "Roof" (0, 1, 0) (0, -1, 0) "GreyMat"
 
 Triangle "LeftWallA" (-1, -1, 0) (-1, 1, 0) (-1, 1, 3) "RedMat"
 Triangle "LeftWallB" (-1, -1, 0) (-1, 1, 3) (-1, -1, 3)  "RedMat"
