@@ -86,6 +86,11 @@ namespace RayTracer
                             x = (2 * ((i + (sx * pixelMulti)) / outputImage.Width) - 1) * scale * imageAspectRatioW;
                             y = (1 - 2 * ((j + (sy * pixelMulti)) / outputImage.Height)) * scale * imageAspectRatioH;
 
+                            if (y == 0)
+                            {
+                                y += 0.0001;
+                            }
+
                             Vector3 rayDirection = new Vector3(x, y, 1);
                             rayDirection = rayDirection - origin;
                             rayDirection = rayDirection.Normalized();
