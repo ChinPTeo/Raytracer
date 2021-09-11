@@ -52,7 +52,7 @@ Be sure to replace `/images/final_scene.png` with your final render so it shows 
 
 ![My final render](/images/final_scene.png)
 
-This render took **x** minutes and **y** seconds on my PC.
+This render took **0** minutes and **40** seconds on my PC.
 
 I used the following command to render the image exactly as shown:
 
@@ -98,4 +98,6 @@ _Ray Tracing in a Weekend_: https://raytracing.github.io/
 
 Great walkthrough of some of the basic maths: https://blog.scottlogic.com/2020/03/10/raytracer-how-to.html
 
-Scratchapixel: intro to ray tracing: https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work
+Scratchapixel: https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work
+
+Sphere math:
