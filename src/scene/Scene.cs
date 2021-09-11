@@ -66,7 +66,7 @@ namespace RayTracer
             }
 
             double scale = Math.Tan(fov / 2 * Math.PI / 180);
-            const int max_bounce = 15;
+            const int max_bounce = 25;
             int s = options.AAMultiplier;
             // Initializing a 2D array of rays, origin at 0,0,0 and direction of pixel
             List<List<Ray>> rays = new List<List<Ray>>();
