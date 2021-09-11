@@ -57,7 +57,7 @@ This render took **0** minutes and **40** seconds on my PC.
 I used the following command to render the image exactly as shown:
 
 ```
-dotnet run -- (... your command line args)
+dotnet run -- -f tests/models/final_scene.txt -o output.png -w 400 -h 400 -x 4
 ```
 
 ## Sample outputs
