@@ -56,14 +56,13 @@ namespace RayTracer
             // Initializing variables
             double fov = 60;
             Vector3 origin = new Vector3(0, 0, 0);
-            double imageAspectRatioW = 1;
+            double imageAspectRatioW = (Double)outputImage.Height / (Double)outputImage.Width; ;
             double imageAspectRatioH = 1;
 
-            if (outputImage.Width / outputImage.Height < 1)
-            {
-                imageAspectRatioH = outputImage.Height / outputImage.Width; // assuming width > height 
+            // if (outputImage.Width / outputImage.Height < 1)
+            // {
 
-            }
+            // }
 
             double scale = Math.Tan(fov / 2 * Math.PI / 180);
             const int max_bounce = 25;
